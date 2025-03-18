@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import RecipeVariations from "./components/RecipeVariations/RecipeVariations";
 import DietaryAnalysis from "./components/DietaryAnalysis/DietaryAnalysis";
-import ShoppingList from "./components/ShoppingList/ShoppingList";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase";
 import { AuthProvider, useAuthState } from "./context/AuthContext";
@@ -18,8 +17,10 @@ import "./App.css";
 // Main recipe generator component
 function RecipeGenerator() {
   const [prompt, setPrompt] = useState("");
+  const [servings, setServings] = useState(4);
   const [recipe, setRecipe] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [dietPreference, setDietPreference] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
@@ -64,7 +65,7 @@ function RecipeGenerator() {
                 content:
                   "You are a helpful cooking assistant that provides detailed recipes. Include recipe category tags at the top (breakfast, lunch, dinner, dessert, snack, etc). Also include nutritional information per serving (calories, protein, carbs, fat). Format your response in markdown with clear ingredients list and step-by-step instructions. Use headings, bullet points, and other markdown formatting to make the recipe easy to read.",
               },
-              { role: "user", content: `Generate a recipe for: ${prompt}` },
+              { role: "user", content: `Generate a recipe for: ${prompt}${dietPreference ? ` (${dietPreference} recipe)` : ''}` },
             ],
           }),
         },
@@ -112,42 +113,66 @@ function RecipeGenerator() {
   return (
     <main className="recipe-container">
       <div className="header-row">
-        <h1>🍽️ AI Recipe Generator</h1>
+        <h1>AI Recipe Generator</h1>
         <div className="header-controls">
           <button
             className="theme-toggle"
             onClick={() => setDarkMode(!darkMode)}
             aria-label="Toggle dark mode"
+            data-dark={darkMode}
           >
-            {darkMode ? "☀️" : "🌙"}
+            <div className="theme-toggle-switch"></div>
           </button>
         </div>
       </div>
       <p className="intro">
-        Enter ingredients, cuisine type, or any recipe idea to get started!
+        Enter your ingredients or desired dish to generate a recipe
       </p>
 
-      <div className="category-filters">
-        <button
-          className={`category-btn ${!selectedCategory ? "active" : ""}`}
-          onClick={() => setSelectedCategory(null)}
-        >
-          All
-        </button>
-        {["Breakfast", "Lunch", "Dinner", "Dessert", "Snack"].map(
-          (category) => (
+      <div className="filters-container">
+        <div className="category-filters">
+          <button
+            className={`category-btn ${!selectedCategory ? "active" : ""}`}
+            onClick={() => setSelectedCategory(null)}
+          >
+            All
+          </button>
+          {["Breakfast", "Lunch", "Dinner", "Dessert", "Snack"].map(
+            (category) => (
+              <button
+                key={category}
+                className={`category-btn ${selectedCategory === category ? "active" : ""}`}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </button>
+            ),
+          )}
+        </div>
+        <div className="diet-filters">
+          <button
+            className={`diet-btn ${!dietPreference ? "active" : ""}`}
+            onClick={() => setDietPreference(null)}
+          >
+            All Diets
+          </button>
+          {[
+            { name: "Vegetarian", icon: "🥕" },
+            { name: "Vegan", icon: "🌱" },
+            { name: "Non-Veg", icon: "🍖" }
+          ].map((diet) => (
             <button
-              key={category}
-              className={`category-btn ${selectedCategory === category ? "active" : ""}`}
-              onClick={() => setSelectedCategory(category)}
+              key={diet.name}
+              className={`diet-btn ${dietPreference === diet.name ? "active" : ""}`}
+              onClick={() => setDietPreference(diet.name)}
             >
-              {category}
+              {diet.icon} {diet.name}
             </button>
-          ),
-        )}
+          ))}
+        </div>
       </div>
       <div className="input-container">
-        <div className="input-group">
+        <div className="input-group glass-input">
           <input
             type="text"
             value={prompt}
@@ -158,6 +183,7 @@ function RecipeGenerator() {
               e.key === "Enter" && prompt.trim() && generateRecipe()
             }
           />
+          <div className="input-icon">🔍</div>
           <input
             type="number"
             min="1"
@@ -167,12 +193,8 @@ function RecipeGenerator() {
             onChange={(e) => {
               const servings = parseInt(e.target.value);
               if (servings > 0) {
-                setPrompt((prev) => {
-                  const withoutServings = prev
-                    .replace(/for \d+ servings?/, "")
-                    .trim();
-                  return `${withoutServings} for ${servings} ${servings === 1 ? "serving" : "servings"}`;
-                });
+                // Store servings separately instead of adding to prompt
+                setServings(servings);
               }
             }}
           />
@@ -199,7 +221,6 @@ function RecipeGenerator() {
           </div>
           <RecipeVariations recipe={recipe} onVariationSelect={setRecipe} />
           <DietaryAnalysis recipe={recipe} />
-          <ShoppingList recipe={recipe} />
           <div className="recipe-actions">
             <button
               className="save-recipe-btn"
@@ -221,26 +242,35 @@ function RecipeGenerator() {
 // Navbar component
 function Navbar() {
   const { user } = useAuthState();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <Link to="/" className="nav-logo">
+        <Link to="/" className="nav-logo" onClick={closeMenu}>
           RecipeAI 🍽️
         </Link>
-        <div className="nav-links">
-          <Link to="/" className="nav-link">
+        <button className="menu-button" onClick={toggleMenu}>
+          ☰
+        </button>
+        <div className={`nav-overlay ${isMenuOpen ? 'active' : ''}`} onClick={closeMenu}></div>
+        <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
+          <button className="nav-close" onClick={closeMenu}>✕</button>
+          <Link to="/" className="nav-link" onClick={closeMenu}>
             Home
           </Link>
           {user ? (
             <>
-              <Link to="/saved-recipes" className="nav-link">
+              <Link to="/saved-recipes" className="nav-link" onClick={closeMenu}>
                 Saved Recipes
               </Link>
-              <Link to="/profile" className="nav-link">
+              <Link to="/profile" className="nav-link" onClick={closeMenu}>
                 Profile
               </Link>
-              <Link to="/inventory" className="nav-link">
+              <Link to="/inventory" className="nav-link" onClick={closeMenu}>
                 Kitchen Inventory
               </Link>
               <span className="user-greeting">

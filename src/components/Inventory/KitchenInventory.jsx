@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { useAuthState } from "../../context/AuthContext";
+import { db } from "../../firebase";
+import { collection, addDoc, deleteDoc, doc, query, where, getDocs } from "firebase/firestore";
 import "./KitchenInventory.css";
 
 export default function KitchenInventory() {
@@ -10,19 +12,57 @@ export default function KitchenInventory() {
   const [unit, setUnit] = useState("pieces");
   const { user } = useAuthState();
 
-  const addIngredient = () => {
-    if (newIngredient.trim()) {
-      setIngredients([
-        ...ingredients,
-        { name: newIngredient, quantity, unit, id: Date.now() }
-      ]);
-      setNewIngredient("");
-      setQuantity("");
+  useEffect(() => {
+    if (user) {
+      loadIngredients();
+    }
+  }, [user]);
+
+  const loadIngredients = async () => {
+    try {
+      const q = query(collection(db, "ingredients"), where("userId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
+      const loadedIngredients = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setIngredients(loadedIngredients);
+    } catch (error) {
+      console.error("Error loading ingredients:", error);
     }
   };
 
-  const removeIngredient = (id) => {
-    setIngredients(ingredients.filter(ing => ing.id !== id));
+  const addIngredient = async () => {
+    if (!newIngredient.trim()) return;
+
+    try {
+      const ingredientData = {
+        name: newIngredient,
+        quantity,
+        unit,
+        userId: user.uid,
+        createdAt: new Date()
+      };
+
+      await addDoc(collection(db, "ingredients"), ingredientData);
+      await loadIngredients();
+      setNewIngredient("");
+      setQuantity("");
+    } catch (error) {
+      console.error("Error adding ingredient:", error);
+    }
+  };
+
+  const removeIngredient = async (id) => {
+    try {
+      const element = document.querySelector(`[data-id="${id}"]`);
+      element.classList.add('vanish');
+      await new Promise(resolve => setTimeout(resolve, 300));
+      await deleteDoc(doc(db, "ingredients", id));
+      await loadIngredients();
+    } catch (error) {
+      console.error("Error removing ingredient:", error);
+    }
   };
 
   return (
@@ -58,7 +98,7 @@ export default function KitchenInventory() {
 
       <div className="ingredients-list">
         {ingredients.map(ing => (
-          <div key={ing.id} className="ingredient-item">
+          <div key={ing.id} className="ingredient-item" data-id={ing.id}>
             <span>{ing.name} - {ing.quantity} {ing.unit}</span>
             <button 
               onClick={() => removeIngredient(ing.id)}

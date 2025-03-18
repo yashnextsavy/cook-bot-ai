@@ -50,7 +50,9 @@ export default function SavedRecipes() {
 
   return (
     <div className="saved-recipes-container">
-      <h1>Your Saved Recipes</h1>
+      <div className="saved-recipes-header">
+        <h1>Your Saved Recipes</h1>
+      </div>
       
       {recipes.length === 0 ? (
         <div className="no-recipes">
