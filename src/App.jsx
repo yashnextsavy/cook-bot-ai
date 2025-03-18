@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { signOut } from "firebase/auth";
@@ -10,6 +11,11 @@ import SavedRecipes from "./components/SavedRecipes/SavedRecipes";
 import UserProfile from "./components/Profile/UserProfile";
 import { saveRecipe } from "./services/recipeService";
 import "./App.css";
+=======
+
+import { useState } from 'react';
+import './App.css';
+>>>>>>> a3c10a3 (Assistant checkpoint: Created an OpenRoutes AI recipe generator app)
 
 // Main recipe generator component
 function RecipeGenerator() {
@@ -208,7 +214,52 @@ function Navbar() {
 
 // Main App component
 export default function App() {
+  const [prompt, setPrompt] = useState('');
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const generateRecipe = async () => {
+    if (!prompt.trim()) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'Recipe Generator'
+        },
+        body: JSON.stringify({
+          model: 'openai/gpt-3.5-turbo',
+          messages: [
+            { role: 'system', content: 'You are a helpful cooking assistant that provides detailed recipes. Format your response with clear ingredients list and step-by-step instructions.' },
+            { role: 'user', content: `Generate a recipe for: ${prompt}` }
+          ]
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error.message || 'Something went wrong');
+      }
+      
+      setRecipe(data.choices[0].message.content);
+    } catch (err) {
+      console.error('Error generating recipe:', err);
+      setError(err.message || 'Failed to generate recipe. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
+<<<<<<< HEAD
     <AuthProvider>
       <Router>
         <div className="app-container">
@@ -236,5 +287,41 @@ export default function App() {
         </div>
       </Router>
     </AuthProvider>
+=======
+    <main className="recipe-container">
+      <h1>AI Recipe Generator</h1>
+      <p className="intro">Enter ingredients, cuisine type, or any recipe idea to get started!</p>
+      
+      <div className="input-container">
+        <input
+          type="text"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          placeholder="E.g., pasta with mushrooms, vegan tacos, quick breakfast..."
+          className="recipe-input"
+        />
+        <button 
+          onClick={generateRecipe} 
+          disabled={loading || !prompt.trim()}
+          className="generate-btn"
+        >
+          {loading ? 'Cooking...' : 'Generate Recipe'}
+        </button>
+      </div>
+
+      {error && <div className="error-message">{error}</div>}
+      
+      {recipe && !loading && (
+        <div className="recipe-result">
+          <h2>Your Recipe</h2>
+          <div className="recipe-content">
+            {recipe.split('\n').map((line, index) => (
+              <p key={index}>{line}</p>
+            ))}
+          </div>
+        </div>
+      )}
+    </main>
+>>>>>>> a3c10a3 (Assistant checkpoint: Created an OpenRoutes AI recipe generator app)
   );
 }
