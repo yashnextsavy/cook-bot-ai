@@ -114,7 +114,7 @@ function RecipeGenerator() {
     <main className="recipe-container">
       <div className="header-row">
         <h1>AI Recipe Generator</h1>
-        <div className="header-controls">
+        {/* <div className="header-controls">
           <button
             className="theme-toggle"
             onClick={() => setDarkMode(!darkMode)}
@@ -123,7 +123,7 @@ function RecipeGenerator() {
           >
             <div className="theme-toggle-switch"></div>
           </button>
-        </div>
+        </div> */}
       </div>
       <p className="intro">
         Enter your ingredients or desired dish to generate a recipe
@@ -151,7 +151,7 @@ function RecipeGenerator() {
         </div>
         <div className="diet-filters">
           <button
-            className={`diet-btn ${!dietPreference ? "active" : ""}`}
+            className={`category-btn ${!dietPreference ? "active" : ""}`}
             onClick={() => setDietPreference(null)}
           >
             All Diets
@@ -163,7 +163,7 @@ function RecipeGenerator() {
           ].map((diet) => (
             <button
               key={diet.name}
-              className={`diet-btn ${dietPreference === diet.name ? "active" : ""}`}
+              className={`category-btn ${dietPreference === diet.name ? "active" : ""}`}
               onClick={() => setDietPreference(diet.name)}
             >
               {diet.icon} {diet.name}
@@ -182,21 +182,6 @@ function RecipeGenerator() {
             onKeyDown={(e) =>
               e.key === "Enter" && prompt.trim() && generateRecipe()
             }
-          />
-          <div className="input-icon">🔍</div>
-          <input
-            type="number"
-            min="1"
-            defaultValue="4"
-            className="servings-input"
-            placeholder="Servings"
-            onChange={(e) => {
-              const servings = parseInt(e.target.value);
-              if (servings > 0) {
-                // Store servings separately instead of adding to prompt
-                setServings(servings);
-              }
-            }}
           />
         </div>
         <button
@@ -220,7 +205,7 @@ function RecipeGenerator() {
             <ReactMarkdown>{recipe}</ReactMarkdown>
           </div>
           <RecipeVariations recipe={recipe} onVariationSelect={setRecipe} />
-          <DietaryAnalysis recipe={recipe} />
+          {/* <DietaryAnalysis recipe={recipe} /> */}
           <div className="recipe-actions">
             <button
               className="save-recipe-btn"
@@ -258,7 +243,7 @@ function Navbar() {
         </button>
         <div className={`nav-overlay ${isMenuOpen ? 'active' : ''}`} onClick={closeMenu}></div>
         <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
-          <button className="nav-close" onClick={closeMenu}>✕</button>
+          
           <Link to="/" className="nav-link" onClick={closeMenu}>
             Home
           </Link>

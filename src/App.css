@@ -46,8 +46,9 @@
   justify-content: center;
 }
 
-.diet-btn, .category-btn {
-  padding: 0.75rem 1.25rem;
+.diet-btn,
+.category-btn {
+  padding: 8px 16px;
   border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.8);
@@ -61,13 +62,15 @@
   backdrop-filter: blur(8px);
 }
 
-.diet-btn:hover, .category-btn:hover {
+.diet-btn:hover,
+.category-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
   border-color: var(--primary-color);
 }
 
-.diet-btn.active, .category-btn.active {
+.diet-btn.active,
+.category-btn.active {
   background: var(--gradient-primary);
   color: white;
   border: none;
@@ -85,7 +88,8 @@ body {
 }
 
 .recipe-container {
-  max-width: 800px;
+  max-width: 600px;
+  width: 100%;
   margin: 1rem auto;
   padding: 1.5rem;
   display: flex;
@@ -99,7 +103,6 @@ body {
   border-radius: 1rem;
   background-color: var(--card-background);
   border: 1px solid var(--input-border);
-  backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
 
@@ -114,7 +117,8 @@ body {
     flex-direction: column;
   }
 
-  .recipe-input, .servings-input {
+  .recipe-input,
+  .servings-input {
     width: 100%;
     font-size: 16px;
     padding: 0.8rem 1rem;
@@ -149,7 +153,8 @@ body {
     gap: 0.5rem;
   }
 
-  .save-recipe-btn, .print-recipe-btn {
+  .save-recipe-btn,
+  .print-recipe-btn {
     width: 100%;
   }
 
@@ -158,14 +163,16 @@ body {
     text-align: center;
   }
 
-  .diet-filters, .category-filters {
+  .diet-filters,
+  .category-filters {
     justify-content: flex-start;
     overflow-x: auto;
     padding-bottom: 0.5rem;
     -webkit-overflow-scrolling: touch;
   }
 
-  .diet-btn, .category-btn {
+  .diet-btn,
+  .category-btn {
     flex-shrink: 0;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
@@ -256,6 +263,7 @@ h1 {
   gap: 0.5rem;
   margin-bottom: 1rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .category-btn {
@@ -286,6 +294,7 @@ h1 {
   gap: 1rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .input-group {
@@ -329,7 +338,7 @@ h1 {
   background: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 1.5rem;
   padding: 0.875rem 1.5rem;
   font-size: 0.975rem;
   font-weight: 600;
@@ -350,8 +359,9 @@ h1 {
   transform: translateY(0);
 }
 
-.recipe-input, .servings-input {
-  padding: 1.2rem 1.5rem;
+.recipe-input,
+.servings-input {
+  padding: 0.875rem 1.5rem;
   border: 2px solid rgba(255, 51, 102, 0.2);
   border-radius: 1.5rem;
   background: rgba(255, 255, 255, 0.9);
@@ -366,7 +376,8 @@ h1 {
   box-shadow: var(--input-shadow);
 }
 
-.recipe-input:focus, .servings-input:focus {
+.recipe-input:focus,
+.servings-input:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   outline: none;
@@ -431,9 +442,9 @@ h1 {
   margin-bottom: 14px;
 }
 
-.recipe-content h1, 
-.recipe-content h2, 
-.recipe-content h3, 
+.recipe-content h1,
+.recipe-content h2,
+.recipe-content h3,
 .recipe-content h4 {
   margin-top: 24px;
   margin-bottom: 12px;
@@ -445,7 +456,7 @@ h1 {
   color: var(--secondary-color);
 }
 
-.recipe-content ul, 
+.recipe-content ul,
 .recipe-content ol {
   padding-left: 24px;
   margin-bottom: 18px;
@@ -637,21 +648,14 @@ h1 {
   border: 1px solid var(--input-border);
 }
 
-.servings-input {
-  width: 60px;
-  padding: 0.3rem;
-  margin-left: 0.5rem;
-  border: 1px solid var(--input-border);
-  border-radius: 4px;
-}
-
 .recipe-actions {
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
 }
 
-.save-recipe-btn, .print-recipe-btn {
+.save-recipe-btn,
+.print-recipe-btn {
   padding: 10px 16px;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -796,14 +800,16 @@ h1 {
   margin-top: 1rem;
 }
 
-.allergens, .dietary-info {
+.allergens,
+.dietary-info {
   padding: 1.2rem;
   border-radius: 12px;
   background-color: rgba(79, 70, 229, 0.05);
   border: 1px solid rgba(79, 70, 229, 0.1);
 }
 
-.allergens h4, .dietary-info h4 {
+.allergens h4,
+.dietary-info h4 {
   color: var(--primary-color);
   font-size: 1.1rem;
   margin-bottom: 0.8rem;
@@ -820,12 +826,14 @@ h1 {
   content: "🍽️";
 }
 
-.allergens ul, .dietary-info ul {
+.allergens ul,
+.dietary-info ul {
   list-style: none;
   padding: 0;
 }
 
-.allergens li, .dietary-info li {
+.allergens li,
+.dietary-info li {
   padding: 0.5rem 0;
   color: var(--text-color);
   display: flex;
@@ -843,12 +851,14 @@ h1 {
   color: var(--success-color);
 }
 
-.allergens h4, .dietary-info h4 {
+.allergens h4,
+.dietary-info h4 {
   margin: 0 0 0.5rem 0;
   color: var(--text-color);
 }
 
-.allergens ul, .dietary-info ul {
+.allergens ul,
+.dietary-info ul {
   margin: 0;
   padding-left: 1.5rem;
 }
@@ -858,7 +868,8 @@ h1 {
     font-size: 2rem;
   }
 
-  .recipe-input, .generate-btn {
+  .recipe-input,
+  .generate-btn {
     padding: 12px 16px;
   }
 
