@@ -1,35 +1,50 @@
+
 import React from 'react';
 
-export default function RecipeVariations({ recipe, onVariationSelect }) {
-  const variations = {
-    vegan: { label: '🌱 Vegan', replacements: { meat: 'tofu', milk: 'almond milk', egg: 'flax egg' } },
-    glutenFree: { label: '🌾 Gluten-Free', replacements: { flour: 'almond flour', pasta: 'gluten-free pasta' } },
-    lowCarb: { label: '🥑 Low-Carb', replacements: { rice: 'cauliflower rice', potato: 'turnip' } }
-  };
-
-  const generateVariation = (type) => {
-    let modifiedRecipe = recipe;
-    Object.entries(variations[type].replacements).forEach(([original, replacement]) => {
-      const regex = new RegExp(original, 'gi');
-      modifiedRecipe = modifiedRecipe.replace(regex, replacement);
-    });
-    onVariationSelect(modifiedRecipe);
-  };
+const RecipeVariations = ({ onVariationClick, servings, onServingsChange }) => {
+  const variations = [
+    { name: 'Make Spicier 🌶️', prompt: 'make this recipe spicier' },
+    { name: 'Make Healthier 🥗', prompt: 'make this recipe healthier' },
+    { name: 'Quick Version ⚡', prompt: 'create a quicker version of this recipe' }
+  ];
 
   return (
-    <div className="recipe-variations">
-      <h3>Recipe Variations</h3>
-      <div className="variation-buttons">
-        {Object.entries(variations).map(([key, variation]) => (
-          <button
-            key={key}
-            onClick={() => generateVariation(key)}
-            className="variation-btn"
+    <div className="recipe-customize">
+      <div className="recipe-variations">
+        <h4>Recipe Variations</h4>
+        <div className="variation-buttons">
+          {variations.map((variation) => (
+            <button
+              key={variation.name}
+              onClick={() => onVariationClick(variation.prompt)}
+              className="variation-btn"
+            >
+              {variation.name}
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      <div className="servings-adjuster">
+        <h4>Adjust Servings</h4>
+        <div className="servings-controls">
+          <button 
+            onClick={() => onServingsChange(Math.max(1, servings - 1))}
+            className="servings-btn"
           >
-            {variation.label}
+            -
           </button>
-        ))}
+          <span>{servings} servings</span>
+          <button 
+            onClick={() => onServingsChange(servings + 1)}
+            className="servings-btn"
+          >
+            +
+          </button>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default RecipeVariations;

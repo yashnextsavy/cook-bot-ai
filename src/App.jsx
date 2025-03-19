@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import RecipeVariations from "./components/RecipeVariations/RecipeVariations";
-import DietaryAnalysis from "./components/DietaryAnalysis/DietaryAnalysis";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase";
 import { AuthProvider, useAuthState } from "./context/AuthContext";
@@ -52,23 +50,24 @@ function RecipeGenerator() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY || ""}`,
-            "HTTP-Referer": `${window.location.origin}`,
-            "X-Title": "Recipe Generator",
             "HTTP-Referer": window.location.origin,
             "X-Title": "Recipe Generator",
           },
           body: JSON.stringify({
-            model: "meta-llama/llama-3-8b-instruct:free",
+            model: "google/learnlm-1.5-pro-experimental:free",
             messages: [
               {
                 role: "system",
                 content:
-                  "You are a helpful cooking assistant that provides detailed recipes. Include recipe category tags at the top (breakfast, lunch, dinner, dessert, snack, etc). Also include nutritional information per serving (calories, protein, carbs, fat). Format your response in markdown with clear ingredients list and step-by-step instructions. Use headings, bullet points, and other markdown formatting to make the recipe easy to read.",
+                  "You are an experienced and knowledgeable chef and cooking assistant. Provide high-quality, detailed recipes with step-by-step instructions, ensuring clarity and ease of preparation for all skill levels. \n\n### Formatting Requirements:\n- **Recipe Title**\n- **Category Tags** (e.g., Breakfast, Lunch, Dinner, Dessert, Snack, etc.)\n- **Ingredients List** (Only use ingredients that are commonly available in India)\n- **Step-by-Step Instructions**\n- **Nutritional Information per Serving** (Calories, Protein, Carbs, Fat)\n- **Recipe Variations** (e.g., alternative ingredients, different preparation methods)\n- **Allergen Warnings** (mention potential allergens like nuts, dairy, gluten, etc.)\n- **Diet Compliance** (e.g., Vegan, Vegetarian, Keto, Gluten-Free, etc.)\n\nUse **markdown formatting** for readability, including headings, bullet points, and bold text where appropriate.",
               },
-              { role: "user", content: `Generate a recipe for: ${prompt}${dietPreference ? ` (${dietPreference} recipe)` : ''}` },
+              {
+                role: "user",
+                content: `Generate a high-quality recipe for: **${prompt}**.\n\n- **Serving Size:** ${servings || 4} servings\n- **Dietary Preference:** ${dietPreference ? `Strictly ${dietPreference}` : "No specific preference"}\n- **Use only ingredients commonly found in India.**\n- **Ensure easy-to-follow instructions and well-organized formatting.**`,
+              },
             ],
           }),
-        },
+        }
       );
 
       const data = await response.json();
@@ -76,8 +75,10 @@ function RecipeGenerator() {
       if (data.error) {
         throw new Error(data.error.message || "Something went wrong");
       }
+      console.log("data, data, data", data);
+      const generatedRecipe = data.choices[0].message.content;
 
-      setRecipe(data.choices[0].message.content);
+      setRecipe(generatedRecipe);
     } catch (err) {
       console.error("Error generating recipe:", err);
       setError(err.message || "Failed to generate recipe. Please try again.");
@@ -111,115 +112,129 @@ function RecipeGenerator() {
   };
 
   return (
-    <main className="recipe-container">
-      <div className="header-row">
-        <h1>AI Recipe Generator</h1>
-        {/* <div className="header-controls">
-          <button
-            className="theme-toggle"
-            onClick={() => setDarkMode(!darkMode)}
-            aria-label="Toggle dark mode"
-            data-dark={darkMode}
-          >
-            <div className="theme-toggle-switch"></div>
-          </button>
-        </div> */}
-      </div>
-      <p className="intro">
-        Enter your ingredients or desired dish to generate a recipe
-      </p>
+    <main className="recipe-page-wrapper">
+      <div className="recipe-container">
+        <div className="header-row">
+          <h1>AI Recipe Generator</h1>
 
-      <div className="filters-container">
-        <div className="category-filters">
-          <button
-            className={`category-btn ${!selectedCategory ? "active" : ""}`}
-            onClick={() => setSelectedCategory(null)}
-          >
-            All
-          </button>
-          {["Breakfast", "Lunch", "Dinner", "Dessert", "Snack"].map(
-            (category) => (
+        </div>
+        <p className="intro">
+          Enter your ingredients or desired dish to generate a recipe
+        </p>
+
+        <div className="filters-container">
+          <div className="category-filters">
+            <button
+              className={`category-btn ${!selectedCategory ? "active" : ""}`}
+              onClick={() => setSelectedCategory(null)}
+            >
+              All
+            </button>
+            {["Breakfast", "Lunch", "Dinner", "Dessert", "Snack"].map(
+              (category) => (
+                <button
+                  key={category}
+                  className={`category-btn ${selectedCategory === category ? "active" : ""}`}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category}
+                </button>
+              ),
+            )}
+          </div>
+          <div className="diet-filters">
+            <button
+              className={`category-btn ${!dietPreference ? "active" : ""}`}
+              onClick={() => setDietPreference(null)}
+            >
+              All Diets
+            </button>
+            {[
+              { name: "Vegetarian", icon: "🥕" },
+              { name: "Vegan", icon: "🌱" },
+              { name: "Non-Veg", icon: "🍖" },
+            ].map((diet) => (
               <button
-                key={category}
-                className={`category-btn ${selectedCategory === category ? "active" : ""}`}
-                onClick={() => setSelectedCategory(category)}
+                key={diet.name}
+                className={`category-btn ${dietPreference === diet.name ? "active" : ""}`}
+                onClick={() => setDietPreference(diet.name)}
               >
-                {category}
+                {diet.icon} {diet.name}
               </button>
-            ),
-          )}
-        </div>
-        <div className="diet-filters">
-          <button
-            className={`category-btn ${!dietPreference ? "active" : ""}`}
-            onClick={() => setDietPreference(null)}
-          >
-            All Diets
-          </button>
-          {[
-            { name: "Vegetarian", icon: "🥕" },
-            { name: "Vegan", icon: "🌱" },
-            { name: "Non-Veg", icon: "🍖" }
-          ].map((diet) => (
-            <button
-              key={diet.name}
-              className={`category-btn ${dietPreference === diet.name ? "active" : ""}`}
-              onClick={() => setDietPreference(diet.name)}
-            >
-              {diet.icon} {diet.name}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="input-container">
-        <div className="input-group glass-input">
-          <input
-            type="text"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="E.g., 🍝 pasta with mushrooms, 🌮 vegan tacos, 🍳 quick breakfast..."
-            className="recipe-input"
-            onKeyDown={(e) =>
-              e.key === "Enter" && prompt.trim() && generateRecipe()
-            }
-          />
-        </div>
-        <button
-          onClick={generateRecipe}
-          disabled={loading || !prompt.trim()}
-          className="generate-btn"
-        >
-          {loading ? "👩‍🍳 Cooking..." : "👩‍🍳 Generate Recipe"}
-        </button>
-      </div>
-
-      {error && <div className="error-message">{error}</div>}
-      {saveSuccess && (
-        <div className="success-message">✅ Recipe saved successfully!</div>
-      )}
-
-      {recipe && !loading && (
-        <div className="recipe-result">
-          <h2>Your Delicious Recipe 🍽️</h2>
-          <div className="recipe-content">
-            <ReactMarkdown>{recipe}</ReactMarkdown>
+            ))}
           </div>
-          <RecipeVariations recipe={recipe} onVariationSelect={setRecipe} />
-          {/* <DietaryAnalysis recipe={recipe} /> */}
-          <div className="recipe-actions">
+        </div>
+
+
+        <div className="input-container">
+
+          <div className="input-group glass-input">
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="E.g., 🍝 pasta with mushrooms, 🌮 vegan tacos, 🍳 quick breakfast..."
+              className="recipe-input"
+              onKeyDown={(e) =>
+                e.key === "Enter" && prompt.trim() && generateRecipe()
+              }
+            />
+          </div>
+          <div className="serving-adjuster-and-button-wrapper">
+            <div className="servings-adjuster">
+              <div className="servings-controls">
+                <button
+                  className="servings-btn"
+                  onClick={() => setServings((prev) => Math.max(1, prev - 1))}
+                >
+                  -
+                </button>
+                <span>{servings} servings</span>
+                <button
+                  className="servings-btn"
+                  onClick={() => setServings((prev) => prev + 1)}
+                >
+                  +
+                </button>
+              </div>
+            </div>
             <button
-              className="save-recipe-btn"
-              onClick={handleSaveRecipe}
-              disabled={savingRecipe || !user}
+              onClick={generateRecipe}
+              disabled={loading || !prompt.trim()}
+              className="generate-btn"
             >
-              {savingRecipe ? "💾 Saving..." : "💾 Save Recipe"}
-            </button>
-            <button className="print-recipe-btn" onClick={handlePrintRecipe}>
-              🖨️ Print/PDF
+              {loading ? "👩‍🍳 Cooking..." : "Generate Recipe"}
             </button>
           </div>
         </div>
-      )}
+
+        {error && <div className="error-message">{error}</div>}
+        {saveSuccess && (
+          <div className="success-message">✅ Recipe saved successfully!</div>
+        )}
+      </div>
+      <div className="recipe-response-container">
+        {recipe && !loading && (
+          <div className="recipe-result">
+            <h2>Your Delicious Recipe 🍽️</h2>
+            <div className="recipe-content">
+              <ReactMarkdown>{recipe}</ReactMarkdown>
+            </div>
+            <div className="recipe-actions">
+              <button
+                className="save-recipe-btn"
+                onClick={handleSaveRecipe}
+                disabled={savingRecipe || !user}
+              >
+                {savingRecipe ? "💾 Saving..." : "💾 Save Recipe"}
+              </button>
+              <button className="print-recipe-btn" onClick={handlePrintRecipe}>
+                🖨️ Print/PDF
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
@@ -232,24 +247,42 @@ function Navbar() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo" onClick={closeMenu}>
-          RecipeAI 🍽️
+          {/* <img
+            src="/smartchef-logo.png"
+            alt="SmartChef Studio"
+            className="nav-logo-img"
+          /> */}
+          SmartChef Studio
         </Link>
-        <button className="menu-button" onClick={toggleMenu}>
-          ☰
-        </button>
-        <div className={`nav-overlay ${isMenuOpen ? 'active' : ''}`} onClick={closeMenu}></div>
-        <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
-          
+        <div
+          className={`nav-overlay ${isMenuOpen ? "active" : ""}`}
+          onClick={closeMenu}
+        ></div>
+        <div className={`nav-links ${isMenuOpen ? "active" : ""}`}>
           <Link to="/" className="nav-link" onClick={closeMenu}>
             Home
           </Link>
           {user ? (
             <>
-              <Link to="/saved-recipes" className="nav-link" onClick={closeMenu}>
+              <Link
+                to="/saved-recipes"
+                className="nav-link"
+                onClick={closeMenu}
+              >
                 Saved Recipes
               </Link>
               <Link to="/profile" className="nav-link" onClick={closeMenu}>

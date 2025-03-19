@@ -21,6 +21,8 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
+    "@fontsource/lato": "^5.2.5",
+    "@fontsource/playfair-display": "^5.2.5",
     "firebase": "^11.4.0",
     "html2pdf.js": "^0.10.3",
     "react-markdown": "^10.1.0",
