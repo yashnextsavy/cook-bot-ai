@@ -30,7 +30,7 @@ function RecipeGenerator() {
   const resultRef = useRef(null);
 
   const cuisineTypes = [
-    'any', 'italian', 'mexican', 'indian', 'chinese', 'japanese', 
+    'any', 'italian', 'mexican', 'indian', 'chinese', 'japanese',
     'thai', 'mediterranean', 'american', 'french'
   ];
 
@@ -52,12 +52,12 @@ function RecipeGenerator() {
           duration: 0.8,
           ease: "power3.out"
         })
-        .from(containerRef.current, {
-          opacity: 0,
-          y: 20,
-          duration: 0.6,
-          ease: "power3.out"
-        }, "-=0.4");
+          .from(containerRef.current, {
+            opacity: 0,
+            y: 20,
+            duration: 0.6,
+            ease: "power3.out"
+          }, "-=0.4");
       });
 
       return () => ctx.revert();
@@ -148,14 +148,16 @@ function RecipeGenerator() {
   return (
     <main className="recipe-page" ref={mainRef}>
       <div className="recipe-container glass" ref={containerRef}>
-        <h1 className="title">Recipe Generator</h1>
-
+        <div className="home-header-wrapper">
+          <h1 className="title">Recipe Generator</h1>
+          <p>Discover delicious recipes tailored to your taste. Enter an ingredient or dish name, choose your preferences, and let SmartChef create the perfect meal for you!</p>
+        </div>
         <div className="search-section">
           <input
             type="text"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="What would you like to cook?"
+            placeholder="What ingredients do you have or what would you like to cook?"
             className="search-input"
             onKeyDown={(e) => e.key === "Enter" && generateRecipe()}
           />
@@ -167,12 +169,12 @@ function RecipeGenerator() {
               <button onClick={() => setServings(prev => prev + 1)}>+</button>
             </div>
 
-            <select 
+            <select
               className="filter-select"
-              value={selectedCuisine} 
+              value={selectedCuisine}
               onChange={e => setSelectedCuisine(e.target.value)}
             >
-              <option value="any">Any Cuisine</option>
+              <option value="any">Choose Cuisine</option>
               {cuisineTypes.filter(cuisine => cuisine !== 'any').map(cuisine => (
                 <option key={cuisine} value={cuisine}>
                   {cuisine.charAt(0).toUpperCase() + cuisine.slice(1)}
@@ -180,12 +182,12 @@ function RecipeGenerator() {
               ))}
             </select>
 
-            <select 
+            <select
               className="filter-select"
-              value={dietPreference} 
+              value={dietPreference}
               onChange={e => setDietPreference(e.target.value)}
             >
-              <option value="any">Any Diet</option>
+              <option value="any">Select Diet</option>
               {dietaryOptions.filter(option => option !== 'any').map(option => (
                 <option key={option} value={option}>
                   {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -194,7 +196,7 @@ function RecipeGenerator() {
             </select>
 
 
-            <button 
+            <button
               className="generate-btn"
               onClick={generateRecipe}
               disabled={loading || !prompt.trim()}
@@ -256,7 +258,7 @@ function Navbar() {
 
   return (
     <nav className="navbar glass" ref={navRef}>
-      <Link to="/" className="logo">SmartChef</Link>
+      <Link to="/" className="logo"><img className="logo-img" src="/logo-one.svg" alt="logo-img"/></Link>
       <div className="nav-links">
         <Link to="/">Home</Link>
         {user ? (
