@@ -1,56 +1,51 @@
-
 .profile-container {
   max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: var(--card-background);
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.profile-container h1 {
-  margin-bottom: 2rem;
-  color: var(--primary-color);
-  text-align: center;
+.profile-banner {
+  position: relative;
+  height: 300px;
+  margin-bottom: 3rem;
+  border-radius: 16px;
+  overflow: hidden;
+  background: url('/public/profile-banner.jpg') center/cover no-repeat;
 }
 
 .profile-card {
-  padding: 2rem;
-  border-radius: 10px;
-  background-color: var(--card-background);
-  border: 1px solid var(--border-color);
+  padding: 1rem 0 0;
+
 }
 
 .profile-header {
   display: flex;
   gap: 2rem;
+  align-items: center;
   margin-bottom: 2rem;
 }
 
 .profile-avatar {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
+  border: 4px solid white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  flex-shrink: 0;
+  transition: transform 0.3s ease;
 }
+
 
 .profile-avatar img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
-}
-
-.avatar-placeholder {
+  object-position: center;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--primary-color);
-  color: white;
-  font-size: 2.5rem;
-  font-weight: bold;
 }
 
 .profile-info {
@@ -59,124 +54,71 @@
 
 .profile-info h2 {
   margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
   color: var(--text-color);
 }
 
 .user-email {
-  color: #888;
-  margin-bottom: 1.5rem;
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 1rem;
 }
 
 .profile-actions {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
 }
 
-.edit-btn, .logout-btn, .save-btn, .cancel-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.9rem;
+.profile-actions button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
   font-weight: 600;
-  cursor: pointer;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-.edit-btn {
-  background-color: var(--secondary-color);
-  color: white;
-  border: none;
+.profile-actions .edit-btn {
+  border: 0;
+  background: var(--primary);
+  color: var(--background);
 }
 
-.edit-btn:hover {
-  background-color: #259d8f;
-}
+.profile-actions .edit-btn:hover {
+  background: var(--primary-light);
 
-.logout-btn, .cancel-btn {
-  background-color: transparent;
-  border: 1px solid #d32f2f;
-  color: #d32f2f;
-}
-
-.logout-btn:hover, .cancel-btn:hover {
-  background-color: rgba(211, 47, 47, 0.1);
-}
-
-.save-btn {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-}
-
-.save-btn:hover {
-  background-color: #e55a2a;
-}
-
-.save-btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.profile-name-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  background-color: var(--card-background);
-  color: var(--text-color);
-}
-
-.profile-error {
-  background-color: #ffebee;
-  color: #d32f2f;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-}
-
-.profile-success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 1rem;
 }
 
 .profile-stats {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color);
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .stat-item {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 1.5rem;
+  border-radius: 12px;
   text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-5px);
 }
 
 .stat-item h3 {
-  font-size: 1rem;
-  color: #888;
+  font-size: 0.9rem;
+  color: #666;
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .stat-item p {
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--text-color);
-}
-
-@media (max-width: 600px) {
-  .profile-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .profile-stats {
-    grid-template-columns: 1fr;
-  }
 }

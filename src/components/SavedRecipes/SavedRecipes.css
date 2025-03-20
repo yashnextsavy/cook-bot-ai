@@ -1,4 +1,3 @@
-
 .saved-recipes-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -7,13 +6,47 @@
   background-color: var(--background-color);
 }
 
-.saved-recipes-header {
-  text-align: center;
+.saved-content-container {
+  max-width: 80%;
+  margin: 2rem auto;
+
+}
+
+.saved-recipes-banner {
+  position: relative;
+  height: 300px;
   margin-bottom: 3rem;
-  padding: 2rem 0;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   border-radius: 16px;
+  overflow: hidden;
+  background: url('/public/saved-recipes-img.jpg') center/cover no-repeat;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(46, 139, 87, 0.9), rgba(0, 0, 0, 0.7));
+}
+
+.saved-recipes-header {
+  position: relative;
+  text-align: center;
+  padding: 2rem 0;
   color: white;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.saved-recipes-header p {
+  margin: 0;
+  font-size: 1.2rem;
+  opacity: 0.9;
 }
 
 .saved-recipes-header h1 {
@@ -37,22 +70,22 @@
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
-  border: 1px solid var(--input-border);
+  border: 1px solid var(--primary-light);
   padding: 2rem;
   height: 600px;
 }
 
 .recipe-card:hover {
-  transform: translateY(-8px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .recipe-card-content {
   flex: 1;
   overflow-y: auto;
-  padding-right: 1rem;
+  /* padding-right: 1rem; */
   font-size: 1.1rem;
   line-height: 1.6;
+  position: relative;
 }
 
 .recipe-card-content::-webkit-scrollbar {
@@ -73,7 +106,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 2px solid var(--input-border);
 }
@@ -129,11 +161,11 @@
   .recipes-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .saved-recipes-container {
     padding: 1rem;
   }
-  
+
   .recipe-card {
     height: auto;
     min-height: 500px;
