@@ -106,13 +106,24 @@ function RecipeGenerator() {
             messages: [
               {
                 role: "system",
-                content: "You are an experienced chef and cooking assistant. Provide detailed recipes with step-by-step instructions.",
+                content: "You are a professional chef and culinary assistant, specializing in detailed, step-by-step recipes. Each recipe includes precise instructions, nutritional values, allergy information, optional ingredient substitutions, and expert cooking tips. You also provide time-saving kitchen hacks and alternative ingredient suggestions to suit various dietary needs.",
               },
               {
                 role: "user",
-                content: `Generate a recipe for: ${prompt}\nServings: ${servings}\nCuisine: ${selectedCuisine}\nDiet: ${dietPreference}`,
+                content: `Generate a comprehensive recipe for: ${prompt}  
+                - **Servings:** ${servings}  
+                - **Cuisine:** ${selectedCuisine}  
+                - **Diet:** ${dietPreference} (strictly follow; if vegetarian, exclude eggs and all animal products)  
+                  
+                **Ensure the recipe includes:**  
+                - Step-by-step cooking instructions  
+                - Nutritional values per serving  
+                - Allergy warnings  
+                - Optional ingredient substitutions  
+                - Pro tips for better flavor and efficiency`,
               },
             ],
+
           }),
         }
       );
@@ -256,11 +267,11 @@ function Navbar() {
     }
   }, []);
 
-  
+
 
   return (
     <nav className="navbar glass" ref={navRef}>
-      <Link to="/" className="logo"><img className="logo-img" src="/logo-one.svg" alt="logo-img"/></Link>
+      <Link to="/" className="logo"><img className="logo-img" src="/logo-one.svg" alt="logo-img" /></Link>
       <div className="nav-links">
         <Link to="/">Home</Link>
         {user ? (
