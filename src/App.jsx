@@ -256,6 +256,8 @@ function Navbar() {
     }
   }, []);
 
+  
+
   return (
     <nav className="navbar glass" ref={navRef}>
       <Link to="/" className="logo"><img className="logo-img" src="/logo-one.svg" alt="logo-img"/></Link>
