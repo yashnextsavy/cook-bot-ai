@@ -12,6 +12,7 @@ import UserProfile from "./components/Profile/UserProfile";
 import KitchenInventory from "./components/Inventory/KitchenInventory";
 import { saveRecipe } from "./services/recipeService";
 import "./App.css";
+import Community from "./components/Community/Community";
 
 function RecipeGenerator() {
   const [prompt, setPrompt] = useState("");
@@ -267,8 +268,6 @@ function Navbar() {
     }
   }, []);
 
-
-
   return (
     <nav className="navbar glass" ref={navRef}>
       <Link to="/" className="logo"><img className="logo-img" src="/logo-one.svg" alt="logo-img" /></Link>
@@ -276,6 +275,7 @@ function Navbar() {
         <Link to="/">Home</Link>
         {user ? (
           <>
+            <Link to="/community">Community</Link>
             <Link to="/saved-recipes">Saved</Link>
             <Link to="/profile">Profile</Link>
             <Link to="/inventory">Inventory</Link>
@@ -300,6 +300,14 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<RecipeGenerator />} />
+            <Route
+              path="/community"
+              element={
+                <ProtectedRoute>
+                  <Community />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/saved-recipes"
               element={

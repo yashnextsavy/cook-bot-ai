@@ -9,11 +9,14 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       if (isLogin) {
@@ -23,7 +26,28 @@ export default function Login() {
       }
       navigate("/");
     } catch (err) {
-      setError(err.message);
+      console.log("err", err)
+      setError(getFriendlyErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getFriendlyErrorMessage = (error) => {
+    if (error?.code === 400 || error?.message?.includes("auth/invalid-credential")) {
+      return "Invalid email or password. Please try again.";
+    }
+    switch (error.code) {
+      case "auth/user-not-found":
+        return "No account found with this email. Please sign up.";
+      case "auth/wrong-password":
+        return "Incorrect password. Try again.";
+      case "auth/email-already-in-use":
+        return "Email is already in use. Try logging in.";
+      case "auth/weak-password":
+        return "Password should be at least 6 characters.";
+      default:
+        return "Something went wrong. Please try again.";
     }
   };
 
@@ -42,26 +66,38 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="your@email.com"
+              aria-label="Email address"
             />
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                aria-label="Password"
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label="Toggle password visibility"
+              >
+                {showPassword ? "🙈" : "🐵"}
+              </button>
+            </div>
           </div>
-          <button type="submit" className="auth-button">
-            {isLogin ? "Start Cooking" : "Create Account"}
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? "Processing..." : isLogin ? "Start Cooking" : "Create Account"}
           </button>
         </form>
         <p className="toggle-auth">
           {isLogin ? "New to SmartChef? " : "Already a chef? "}
-          <span onClick={() => setIsLogin(!isLogin)}>
+          <span className="toggle-auth-span" onClick={() => setIsLogin(!isLogin)}>
             {isLogin ? "Sign Up" : "Login"}
           </span>
         </p>
